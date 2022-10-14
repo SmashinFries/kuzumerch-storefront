@@ -25,7 +25,8 @@ export type QueryParams = Partial<
     | "orderId"
     | "redirectUrl"
     | "locale"
-    | "dummyPayment",
+    | "dummyPayment"
+    | "saleorApiHost",
     string
   >
 > & { countryCode: CountryCode; locale: Locale };
@@ -34,6 +35,7 @@ export const getRawQueryParams = () => queryString.parse(location.search);
 
 export const getQueryParams = (): QueryParams => {
   const vars = getRawQueryParams();
+  // @todo: validate this
   return {
     ...vars,
     locale: vars.locale as Locale,
@@ -41,6 +43,7 @@ export const getQueryParams = (): QueryParams => {
     orderId: vars.order as string | undefined,
     passwordResetToken: vars.token as string | undefined,
     dummyPayment: vars.dummyPayment as "true" | undefined,
+    saleorApiHost: vars.saleorApiHost as string | undefined,
   } as QueryParams;
 };
 

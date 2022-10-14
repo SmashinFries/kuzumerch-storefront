@@ -2,9 +2,20 @@ import { withSentry } from "@sentry/nextjs";
 import { getPublicSettings } from "@/saleor-app-checkout/backend/configuration/settings";
 import { allowCors } from "@/saleor-app-checkout/backend/utils";
 import { NextApiHandler } from "next";
+import { getSaleorApiHostFromRequest } from "@/saleor-app-checkout/backend/auth";
+import { unpackThrowable } from "@/saleor-app-checkout/utils/unpackErrors";
 
 const handler: NextApiHandler = async (req, res) => {
-  const settings = await getPublicSettings();
+  const [saleorApiHostError, saleorApiHost] = unpackThrowable(() =>
+    getSaleorApiHostFromRequest(req)
+  );
+
+  if (saleorApiHostError) {
+    res.status(400).json({ message: saleorApiHostError.message });
+    return;
+  }
+
+  const settings = await getPublicSettings({ saleorApiHost });
 
   console.log(settings); // for deployment debug pusposes
 

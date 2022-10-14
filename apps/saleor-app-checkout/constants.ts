@@ -17,7 +17,6 @@ export type DebugEnvVars = Record<DebugEnvVar, string | undefined>;
 // Need to use `var variable = process.env.VARIABLE;`, not `var env = process.env; var variable = env.VARIABLE;`
 // https://github.com/vercel/next.js/issues/19420
 export const envVars = {
-  apiUrl: localhostHttp(process.env["NEXT_PUBLIC_SALEOR_API_URL"]!),
   checkoutAppUrl: localhostHttp(process.env["NEXT_PUBLIC_CHECKOUT_APP_URL"]!),
   checkoutApiUrl: localhostHttp(
     process.env["NEXT_PUBLIC_CHECKOUT_APP_URL"]
@@ -26,13 +25,7 @@ export const envVars = {
   ),
 };
 
-export const getApiDomain = () => {
-  const url = new URL(envVars.apiUrl);
-  return url.hostname;
-};
-
 export const envVarsNames: EnvVars = {
-  apiUrl: "NEXT_PUBLIC_SALEOR_API_URL",
   checkoutAppUrl: "NEXT_PUBLIC_CHECKOUT_APP_URL",
   checkoutApiUrl: "NEXT_PUBLIC_CHECKOUT_APP_URL",
 };
