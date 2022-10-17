@@ -129,6 +129,7 @@ export const DummyPayment = () => {
                   ? formatMessage(dummyPaymentMessages.loadingWithDots)
                   : formatMessage(dummyPaymentMessages.dummyPay)
               }
+              data-testid="dummyPay"
             />
           </form>
         </div>
