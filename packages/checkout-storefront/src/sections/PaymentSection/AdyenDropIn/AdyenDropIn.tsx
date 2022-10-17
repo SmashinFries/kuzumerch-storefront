@@ -49,8 +49,8 @@ export const AdyenDropIn = memo<AdyenDropInProps>(({}) => {
     component.setStatus("loading");
 
     const result = await fetchCreateDropInAdyenPayment({
-      saleorApiHost,
       checkoutApiUrl,
+      saleorApiHost,
       totalAmount: checkout.totalPrice.gross.amount,
       checkoutId: checkout.id,
       method: "dropin",
@@ -73,7 +73,7 @@ export const AdyenDropIn = memo<AdyenDropInProps>(({}) => {
       );
       return;
     } else {
-      return handlePaymentResult(result, component);
+      return handlePaymentResult(saleorApiHost, result, component);
     }
   });
 
@@ -91,7 +91,7 @@ export const AdyenDropIn = memo<AdyenDropInProps>(({}) => {
         return;
       }
 
-      return handlePaymentResult(result, component);
+      return handlePaymentResult(saleorApiHost, result, component);
     }
   );
 
@@ -116,10 +116,12 @@ function useDropinAdyenElement(
 ) {
   const dropinContainerElRef = useRef<HTMLDivElement>(null);
   const dropinComponentRef = useRef<DropinElement | null>(null);
+  const { saleorApiHost } = useAppConfig();
 
   const [adyenSessionResponse] = useFetch(createDropInAdyenSession, {
     args: {
       checkoutApiUrl,
+      saleorApiHost,
       checkoutId: checkout?.id,
       // we send 0 here and update it later inside `onSubmit`
       totalAmount: 0,

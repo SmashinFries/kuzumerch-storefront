@@ -1,5 +1,4 @@
 import Dynamic from "next/dynamic";
-import { useRouter } from "next/router";
 import { envVars } from "../constants";
 
 const CheckoutStoreFront = Dynamic(
@@ -14,16 +13,11 @@ const CheckoutStoreFront = Dynamic(
 );
 
 export default function CheckoutSpa() {
-  const {
-    query: { saleorApiHost },
-  } = useRouter();
+  console.log("SIEMA");
+
   const checkoutApiUrl = envVars.checkoutApiUrl;
   const checkoutAppUrl = envVars.checkoutAppUrl;
 
-  if (!saleorApiHost || typeof saleorApiHost !== "string") {
-    console.warn(`Missing saleorApiHost query param`);
-    return null;
-  }
   if (!checkoutApiUrl) {
     console.warn(`Missing NEXT_PUBLIC_CHECKOUT_APP_URL env variable`);
     return null;
@@ -33,9 +27,5 @@ export default function CheckoutSpa() {
     return null;
   }
 
-  return (
-    <CheckoutStoreFront
-      env={{ apiUrl: `https://${saleorApiHost}/graphql/`, checkoutApiUrl, checkoutAppUrl }}
-    />
-  );
+  return <CheckoutStoreFront env={{ checkoutApiUrl, checkoutAppUrl }} />;
 }

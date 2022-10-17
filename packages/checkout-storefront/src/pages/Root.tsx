@@ -43,6 +43,8 @@ const useCurrentLocale = () => {
 export const Root = ({ env }: RootProps) => {
   const { currentLocale, setCurrentLocale, messages, saleorApiHost } = useCurrentLocale();
 
+  console.log({ saleorApiHost });
+
   const authorizedFetch = useMemo(() => createFetch(), []);
 
   const client = useMemo(
