@@ -12,10 +12,10 @@ import { RootViews } from "../views/RootViews/RootViews";
 import { useMemo, useState, useCallback } from "react";
 import { UrlChangeHandlerArgs, useUrlChange } from "@/checkout-storefront/hooks/useUrlChange";
 import { DEFAULT_LOCALE, getCurrentLocale, Locale } from "@/checkout-storefront/lib/regions";
+import { getQueryParams } from "../lib/utils";
 
 import En from "../../content/compiled-locales/en-US.json";
 import Minion from "../../content/compiled-locales/minion.json";
-import { getQueryParams } from "../lib/utils";
 
 export interface RootProps {
   env: AppEnv;

@@ -1,7 +1,7 @@
 import { withSentry } from "@sentry/nextjs";
 import { NextApiHandler } from "next";
 
-import { DummyPayRequestBody } from "@/saleor-app-checkout/../../packages/checkout-common/dist";
+import { DummyPayRequestBody } from "checkout-common";
 import { updateOrCreateTransaction } from "@/saleor-app-checkout/backend/payments/updateOrCreateTransaction";
 import { allowCors } from "@/saleor-app-checkout/backend/utils";
 import { TransactionCreateMutationVariables } from "@/saleor-app-checkout/graphql";
@@ -10,14 +10,15 @@ import * as yup from "yup";
 import { getSaleorApiHostFromRequest } from "@/saleor-app-checkout/backend/auth";
 import { unpackThrowable } from "@/saleor-app-checkout/utils/unpackErrors";
 
-const dummyPayBodySchema: yup.ObjectSchema<Omit<DummyPayRequestBody, "checkoutApiUrl">> =
-  yup.object({
-    orderId: yup.string().required(),
-    amountCharged: yup.object({
-      amount: yup.number().required(),
-      currency: yup.string().required(),
-    }),
-  });
+const dummyPayBodySchema: yup.ObjectSchema<
+  Omit<DummyPayRequestBody, "checkoutApiUrl" | "saleorApiHost">
+> = yup.object({
+  orderId: yup.string().required(),
+  amountCharged: yup.object({
+    amount: yup.number().required(),
+    currency: yup.string().required(),
+  }),
+});
 
 const parseAndValidateBody = createParseAndValidateBody(dummyPayBodySchema);
 
