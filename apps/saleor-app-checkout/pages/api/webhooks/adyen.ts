@@ -31,10 +31,10 @@ const handler: Handler<AdyenRequestParams> = async (request) => {
 
   const notificationItem = request.params?.notificationItems?.[0]?.NotificationRequestItem;
 
-  const saleorApiHost = request.params.saleorApiHost;
+  const saleorApiUrl = request.params.saleorApiUrl;
 
   const [error] = await unpackPromise(
-    notificationHandler({ saleorApiHost, notification: notificationItem, apiKey })
+    notificationHandler({ saleorApiUrl, notification: notificationItem, apiKey })
   );
 
   if (error) {
@@ -56,11 +56,11 @@ export default withSentry(
 );
 
 async function notificationHandler({
-  saleorApiHost,
+  saleorApiUrl,
   notification,
   apiKey,
 }: {
-  saleorApiHost: string;
+  saleorApiUrl: string;
   notification: Types.notification.NotificationRequestItem;
   apiKey: string;
 }) {
@@ -74,7 +74,7 @@ async function notificationHandler({
 
   // Get order transactions and run deduplication
   // https://docs.adyen.com/development-resources/webhooks/best-practices#handling-duplicates
-  const transactions = await getOrderTransactions(saleorApiHost, { id: orderId });
+  const transactions = await getOrderTransactions(saleorApiUrl, { id: orderId });
   const duplicate = isNotificationDuplicate(transactions, notification);
 
   if (duplicate) {
@@ -94,7 +94,7 @@ async function notificationHandler({
 
     const data = getUpdatedTransactionData(transaction, notification);
 
-    await updateTransaction(saleorApiHost, data);
+    await updateTransaction(saleorApiUrl, data);
   } else {
     const data = getNewTransactionData(orderId, notification);
 
@@ -102,6 +102,6 @@ async function notificationHandler({
       return;
     }
 
-    await createTransaction(saleorApiHost, data);
+    await createTransaction(saleorApiUrl, data);
   }
 }

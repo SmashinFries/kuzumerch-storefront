@@ -43,36 +43,34 @@ const useCurrentLocale = () => {
 
 export const Root = ({ env }: RootProps) => {
   const { currentLocale, setCurrentLocale, messages } = useCurrentLocale();
-  const { saleorApiHost } = getQueryParams();
-
-  console.log({ saleorApiHost });
+  const { saleorApiUrl } = getQueryParams();
 
   const authorizedFetch = useMemo(() => createFetch(), []);
 
   const client = useMemo(
     () =>
-      saleorApiHost
+      saleorApiUrl
         ? createClient({
-            url: `https://${saleorApiHost}/graphql/`,
+            url: saleorApiUrl,
             suspense: true,
             requestPolicy: "cache-and-network",
             fetch: authorizedFetch as ClientOptions["fetch"],
           })
         : null,
-    [authorizedFetch, saleorApiHost]
+    [authorizedFetch, saleorApiUrl]
   );
 
   // temporarily need to use @apollo/client because saleor sdk
   // is based on apollo. to be changed
   const saleorClient = useMemo(
     () =>
-      saleorApiHost
+      saleorApiUrl
         ? createSaleorClient({
-            apiUrl: `https://${saleorApiHost}/graphql/`,
+            apiUrl: saleorApiUrl,
             channel: "default-channel",
           })
         : null,
-    [saleorApiHost]
+    [saleorApiUrl]
   );
 
   const handleUrlChange = useCallback(
@@ -84,7 +82,7 @@ export const Root = ({ env }: RootProps) => {
 
   useUrlChange(handleUrlChange);
 
-  if (!saleorApiHost || !saleorClient || !client) {
+  if (!saleorApiUrl || !saleorClient || !client) {
     console.warn(`Missing "domain" query param!`);
     return null;
   }

@@ -2,18 +2,16 @@ import { withSentry } from "@sentry/nextjs";
 import { getChannelActivePaymentProvidersSettings } from "@/saleor-app-checkout/backend/configuration/settings";
 import { allowCors } from "@/saleor-app-checkout/backend/utils";
 import { NextApiHandler } from "next";
-import { getSaleorApiHostFromRequest } from "@/saleor-app-checkout/backend/auth";
+import { getSaleorApiUrlFromRequest } from "@/saleor-app-checkout/backend/auth";
 import { unpackThrowable } from "@/saleor-app-checkout/utils/unpackErrors";
 
 const handler: NextApiHandler = async (req, res) => {
   const { channelId } = req.query;
 
-  const [saleorApiHostError, saleorApiHost] = unpackThrowable(() =>
-    getSaleorApiHostFromRequest(req)
-  );
+  const [saleorApiUrlError, saleorApiUrl] = unpackThrowable(() => getSaleorApiUrlFromRequest(req));
 
-  if (saleorApiHostError) {
-    res.status(400).json({ message: saleorApiHostError.message });
+  if (saleorApiUrlError) {
+    res.status(400).json({ message: saleorApiUrlError.message });
     return;
   }
 
@@ -23,7 +21,7 @@ const handler: NextApiHandler = async (req, res) => {
   }
 
   const channelProvidersSettings = await getChannelActivePaymentProvidersSettings({
-    saleorApiHost,
+    saleorApiUrl,
     channelId: channelId.toString(),
   });
 

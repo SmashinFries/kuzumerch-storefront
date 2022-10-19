@@ -62,7 +62,7 @@ export function createAdyenCheckoutInstance(
 }
 
 export function handlePaymentResult(
-  saleorApiHost: string,
+  saleorApiUrl: string,
   result: PostAdyenDropInPaymentsResponse | PostAdyenDropInPaymentsDetailsResponse,
   component: DropinElement
 ) {
@@ -87,13 +87,14 @@ export function handlePaymentResult(
 
     case AdyenApiPaymentResponse.ResultCodeEnum.Authorised:
     case AdyenApiPaymentResponse.ResultCodeEnum.Success: {
+      const domain = new URL(saleorApiUrl).hostname;
       const newSearchParams = new URLSearchParams({
         order: result.orderId,
-        saleorApiHost,
+        saleorApiUrl,
         // @todo remove `domain`
         // https://github.com/saleor/saleor-dashboard/issues/2387
         // https://github.com/saleor/saleor-app-sdk/issues/87
-        domain: saleorApiHost,
+        domain,
       });
       window.location.href = `?` + newSearchParams.toString();
       return;

@@ -7,11 +7,11 @@ import { allowCors } from "@/saleor-app-checkout/backend/utils";
 import { TransactionCreateMutationVariables } from "@/saleor-app-checkout/graphql";
 import { createParseAndValidateBody } from "@/saleor-app-checkout/utils";
 import * as yup from "yup";
-import { getSaleorApiHostFromRequest } from "@/saleor-app-checkout/backend/auth";
+import { getSaleorApiUrlFromRequest } from "@/saleor-app-checkout/backend/auth";
 import { unpackThrowable } from "@/saleor-app-checkout/utils/unpackErrors";
 
 const dummyPayBodySchema: yup.ObjectSchema<
-  Omit<DummyPayRequestBody, "checkoutApiUrl" | "saleorApiHost">
+  Omit<DummyPayRequestBody, "checkoutApiUrl" | "saleorApiUrl">
 > = yup.object({
   orderId: yup.string().required(),
   amountCharged: yup.object({
@@ -31,12 +31,10 @@ const handler: NextApiHandler = async (req, res) => {
     return;
   }
 
-  const [saleorApiHostError, saleorApiHost] = unpackThrowable(() =>
-    getSaleorApiHostFromRequest(req)
-  );
+  const [saleorApiUrlError, saleorApiUrl] = unpackThrowable(() => getSaleorApiUrlFromRequest(req));
 
-  if (saleorApiHostError) {
-    res.status(400).json({ message: saleorApiHostError.message });
+  if (saleorApiUrlError) {
+    res.status(400).json({ message: saleorApiUrlError.message });
     return;
   }
 
@@ -51,7 +49,7 @@ const handler: NextApiHandler = async (req, res) => {
     },
   };
 
-  await updateOrCreateTransaction({ saleorApiHost, orderId: transactionData.id, transactionData });
+  await updateOrCreateTransaction({ saleorApiUrl, orderId: transactionData.id, transactionData });
 
   res.status(200).send({ ok: true });
 };

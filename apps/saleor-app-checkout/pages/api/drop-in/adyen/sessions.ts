@@ -1,4 +1,4 @@
-import { getSaleorApiHostFromRequest } from "@/saleor-app-checkout/backend/auth";
+import { getSaleorApiUrlFromRequest } from "@/saleor-app-checkout/backend/auth";
 import { createAdyenCheckoutSession } from "@/saleor-app-checkout/backend/payments/providers/adyen";
 import { allowCors, getBaseUrl } from "@/saleor-app-checkout/backend/utils";
 import { createParseAndValidateBody } from "@/saleor-app-checkout/utils";
@@ -25,19 +25,17 @@ const DropInAdyenSessionsHandler: NextApiHandler<
     return;
   }
 
-  const [saleorApiHostError, saleorApiHost] = unpackThrowable(() =>
-    getSaleorApiHostFromRequest(req)
-  );
+  const [saleorApiUrlError, saleorApiUrl] = unpackThrowable(() => getSaleorApiUrlFromRequest(req));
 
-  if (saleorApiHostError) {
-    res.status(400).json({ message: saleorApiHostError.message });
+  if (saleorApiUrlError) {
+    res.status(400).json({ message: saleorApiUrlError.message });
     return;
   }
 
   try {
     const appUrl = getBaseUrl(req);
 
-    const { session, clientKey } = await createAdyenCheckoutSession(saleorApiHost, {
+    const { session, clientKey } = await createAdyenCheckoutSession(saleorApiUrl, {
       ...body,
       redirectUrl: appUrl,
     });
