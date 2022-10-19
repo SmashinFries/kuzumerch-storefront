@@ -15,6 +15,7 @@ import { DEFAULT_LOCALE, getCurrentLocale, Locale } from "@/checkout-storefront/
 
 import En from "../../content/compiled-locales/en-US.json";
 import Minion from "../../content/compiled-locales/minion.json";
+import { getQueryParams } from "../lib/utils";
 
 export interface RootProps {
   env: AppEnv;
@@ -41,7 +42,8 @@ const useCurrentLocale = () => {
 };
 
 export const Root = ({ env }: RootProps) => {
-  const { currentLocale, setCurrentLocale, messages, saleorApiHost } = useCurrentLocale();
+  const { currentLocale, setCurrentLocale, messages } = useCurrentLocale();
+  const { saleorApiHost } = getQueryParams();
 
   console.log({ saleorApiHost });
 
@@ -81,7 +83,7 @@ export const Root = ({ env }: RootProps) => {
   );
 
   useUrlChange(handleUrlChange);
-  
+
   if (!saleorApiHost || !saleorClient || !client) {
     console.warn(`Missing "domain" query param!`);
     return null;
